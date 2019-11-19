@@ -2,16 +2,17 @@ import json
 from knobs import Knob
 from flask import Flask, flash, render_template, request
 from requests import post, get
-from wtforms import (Form, IntegerField, StringField,SelectField)
+from wtforms import (Form, IntegerField, StringField, SelectField)
 import os
 import logging
-import time
+
 logger = logging.getLogger(__name__)
 
 DEBUG = False
 app = Flask(__name__)
 app.config.from_object(__name__)
 app.config['SECRET_KEY'] = os.urandom(24)
+
 
 class EndpointClass:
 
@@ -46,6 +47,7 @@ class EndpointClass:
         except json.JSONDecodeError:
             logger.error(f"Non JSON response returned for 200 error code at {url}")
 
+
 def parse_request(message: dict):
     if "Message" in message:
         # looks like a microsoft IOT hub message
@@ -60,6 +62,7 @@ def parse_request(message: dict):
             return f"{response_message}"
         else:
             return f"Error: Message"
+
 
 class ReusableForm(Form):
     choices = []
@@ -76,12 +79,13 @@ class ReusableForm(Form):
     poll_time = IntegerField("poll_time")
     slider_timeout = IntegerField("slider_timeout")
 
+
 @app.route("/", methods=['GET', 'POST'])
 def main():
     form = ReusableForm(request.form)
     api = EndpointClass()
     if request.method == 'POST':
-        device_name=request.form['device_name']
+        device_name = request.form['device_name']
         try:
             poll_time = request.form['poll_time']
         except ValueError:
@@ -95,6 +99,7 @@ def main():
         else:
             flash(f"Error: Failed to update device {device_name}, error {result}")
     return render_template('index.html', form=form)
+
 
 if __name__ == "__main__":
     app.run()

@@ -1,0 +1,3 @@
+[submodule "API"]
+	path = API
+	url = https://github.com/SrzStephen/azure-iot-hub-azure-function.git
