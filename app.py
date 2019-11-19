@@ -87,12 +87,12 @@ def main():
     if request.method == 'POST':
         device_name = request.form['device_name']
         try:
-            poll_time = request.form['poll_time']
+            poll_time = int(request.form['poll_time'])
         except ValueError:
             flash("Error: Polltime needs to be an integer value")
             return render_template('index.html', form=form)
 
-        status, result = api.direct_call("polltime", {"polltime": int(poll_time)}, device_name)
+        status, result = api.direct_call("polltime", json.dumps({"polltime": poll_time}), device_name)
         if status:
             if bool(result.get("success", False)):
                 flash(f"Updated poll time to {poll_time} on device {device_name}")
